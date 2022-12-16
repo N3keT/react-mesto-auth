@@ -1,0 +1,15 @@
+.sign__question-button {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: #000;
+}
+
+.sign__question-button:hover {
+    cursor: pointer;
+    opacity: .6;
+}

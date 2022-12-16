@@ -1,0 +1,23 @@
+.header {
+    width: calc(100% - 200px * 2);
+    padding: 45px 0 41px;
+    border-bottom: 1px solid rgba(84, 84, 84, .7);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (max-width: 1023px) {
+    .header {
+        width: calc(100% - 100px * 2);
+    }
+}
+
+@media (max-width: 767px) {
+    .header {
+        width: 100%;
+        padding: 28px 27px 32px;
+        box-sizing: border-box;
+    }
+}

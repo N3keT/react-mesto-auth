@@ -1,0 +1,9 @@
+.element__place {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 20px * 2);
+    margin: 0 auto;
+    padding: 25px 0;
+    align-items: center;
+    gap: 28px;
+}
