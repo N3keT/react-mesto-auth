@@ -1,0 +1,7 @@
+.popup__container-register {
+    display: flex;
+    flex-direction: column;
+    padding: 60px 36px;
+    gap: 32px;
+    align-items: center;
+}

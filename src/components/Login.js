@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Login() {
+function Login(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -12,11 +12,18 @@ function Login() {
         setPassword(e.target.value);
     }
 
+    function handleSubmit() {
+        props.onSubmit(email, password);
+    }
+
     return (
         <section className="sign">
             <div className="sign__container">
                 <p className="sign__heading">Вход</p>
-                <form className="sign__form">
+                <form
+                    className="sign__form"
+                    onSubmit={handleSubmit}
+                >
                     <input 
                         type="email"
                         name="email"

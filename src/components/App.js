@@ -13,7 +13,8 @@ import DeletePlacePopup from './DeletePlacePopup';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
-import apiAuth from '../utils/ApiAuth';
+import * as auth from '../utils/auth';
+import InfoTooltip from './InfoTooltip';
 
 function App() {
     const history = useHistory();
@@ -27,7 +28,11 @@ function App() {
     const [cardDelete, setCardDelete] = useState({});
     const [loggedIn, setLoggedIn] =useState(false);
     const [email, setEmail] = useState('');
-    const [buttonText, setButtonText] =useState('');
+    // const [button, setButton] = useState({button: handleSignUp});
+    // const [buttonText, setButtonText] =useState('Регистрация');
+    const [isInfoTooltipPopupOpen, setInfoTooltipPopupOpen] = useState(false);
+    const [srcInfoTooltip, setSrcInfoTooltip] = useState(false);
+    const [textInfoTooltip, setTextInfoTooltip] = useState(false);
 
     useEffect(() => {
         api.getInitialCards()
@@ -48,6 +53,25 @@ function App() {
             console.log(err);
         });
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            auth.checkToken(token)
+            .then((res) => {
+                if (res) {
+                    setEmail(res.data.email);
+                    setLoggedIn(true);
+                    history.push('/');
+                    // setButtonText('Выйти');
+                    // setButton({button: handleSignOut});
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+    }, [history]);
 
     function handleCardLike(card) {
         const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -107,6 +131,7 @@ function App() {
         setEditAvatarPopupOpen(false);
         setDeletePlacePopupOpen(false);
         setSelectedCard({isOpen: false});
+        setInfoTooltipPopupOpen(false);
     }
 
     function handleCardClick(card) {
@@ -140,10 +165,34 @@ function App() {
     }
 
     function handleSubmitRegister(email, password) {
-        apiAuth.register(email.toLowerCase(), password)
+        auth.register(email.toLowerCase(), password)
         .then((res) => {
             if (res) {
                 history.push('/sign-in');
+                // setButtonText('Регистрация');
+                setInfoTooltipPopupOpen(true);
+                setSrcInfoTooltip(true);
+                setTextInfoTooltip(true);
+                // setButton({button: handleSignIn});
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            setInfoTooltipPopupOpen(true);
+            setSrcInfoTooltip(false);
+            setTextInfoTooltip(false);
+        });
+    }
+
+    function handleSubmitLogin(email, password) {
+        auth.login(email.toLowerCase(), password)
+        .then((res) => {
+            if (res) {
+                localStorage.setItem("token", res.token);
+                setLoggedIn(true);
+                setEmail(email.toLowerCase());
+                history.push('/');
+                // setButton({button: handleSignOut});
             }
         })
         .catch((err) => {
@@ -151,36 +200,63 @@ function App() {
         });
     }
 
+    function handleSignOut() {
+        localStorage.removeItem("token");
+        setLoggedIn(false);
+        setEmail('');
+        history.push('/sign-in');
+    }
+
+    function handleSignIn() {
+        history.push('/sign-in');
+    }
+
+    function handleSignUp() {
+        history.push('/sign-up');
+    }
+
     return (
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page_background">
                 <div className="page">
-                    <Header
-                        buttonText={buttonText}
-                        email={email}
-                    />
                     <Switch>
-                        <ProtectedRoute
-                            component={Main}
-                            exact path='/'
-                            loggedIn={loggedIn}
-                            onEditProfile={handleEditProfileClick}
-                            onAddPlace={handleAddPlaceClick}
-                            onEditAvatar={handleEditAvatarClick}
-                            onCardClick={handleCardClick}
-                            cards={cards}
-                            onCardLike={handleCardLike}
-                            onCardDelete={handleDeletePlaceClick}
-                        />
                         <Route path='/sign-up'>
+                            <Header
+                                buttonText='Войти'
+                                onClick={handleSignIn}
+                            />
                             <Register
                                 onSubmit={handleSubmitRegister}
                             />
                         </Route>
                         <Route path='/sign-in'>
-                            <Login />
+                            <Header
+                                buttonText='Регистрация'
+                                onClick={handleSignUp}
+                            />
+                            <Login
+                                onSubmit={handleSubmitLogin}
+                            />
                         </Route>
                         <Route exact path='/'>
+                            <Header
+                                buttonText='Выйти'
+                                onClick={handleSignOut}
+                            />
+                            <ProtectedRoute
+                                component={Main}
+                                exact path='/'
+                                loggedIn={loggedIn}
+                                onEditProfile={handleEditProfileClick}
+                                onAddPlace={handleAddPlaceClick}
+                                onEditAvatar={handleEditAvatarClick}
+                                onCardClick={handleCardClick}
+                                cards={cards}
+                                onCardLike={handleCardLike}
+                                onCardDelete={handleDeletePlaceClick}
+                            />
+                        </Route>
+                        <Route>
                             {loggedIn ? <Redirect to='/' /> : <Redirect to='/sign-in' />}
                         </Route>
                     </Switch>
@@ -209,6 +285,12 @@ function App() {
                         onClose={closeAllPopups}
                         onDeletePlace={handleCardDelete}
                         card={cardDelete}
+                    />
+                    <InfoTooltip
+                        isOpen={isInfoTooltipPopupOpen}
+                        onClose={closeAllPopups}
+                        src={srcInfoTooltip}
+                        text={textInfoTooltip}
                     />
                 </div>
             </div>

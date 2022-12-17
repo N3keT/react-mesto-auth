@@ -4,7 +4,7 @@ function Header(props) {
             <div className="header__logo"></div>
             <div className="header__container-button">
                 <p className="header__email">{props.email}</p>
-                <button className="header__button">{props.buttonText}</button>
+                <button onClick={props.onClick} className="header__button">{props.buttonText}</button>
             </div>
         </header>
     );

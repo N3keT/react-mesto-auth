@@ -27,6 +27,7 @@ function Register(props) {
                 >
                     <input
                         className="sign__input"
+                        type="email"
                         placeholder="Email"
                         required
                         value={email || ''}
@@ -35,6 +36,7 @@ function Register(props) {
                     <span className="sign__input-error"></span>
                     <input
                         className="sign__input"
+                        type="password"
                         placeholder="Пароль"
                         required
                         value={password || ''}
