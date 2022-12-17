@@ -28,31 +28,33 @@ function App() {
     const [cardDelete, setCardDelete] = useState({});
     const [loggedIn, setLoggedIn] =useState(false);
     const [email, setEmail] = useState('');
-    // const [button, setButton] = useState({button: handleSignUp});
-    // const [buttonText, setButtonText] =useState('Регистрация');
     const [isInfoTooltipPopupOpen, setInfoTooltipPopupOpen] = useState(false);
     const [srcInfoTooltip, setSrcInfoTooltip] = useState(false);
     const [textInfoTooltip, setTextInfoTooltip] = useState(false);
 
     useEffect(() => {
-        api.getInitialCards()
-        .then((cards) => {
-            setCards(cards);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    }, []);
+        if (loggedIn) {
+            api.getInitialCards()
+            .then((cards) => {
+                setCards(cards);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+    }, [loggedIn]);
 
     useEffect(() => {
-        api.getUserInfo()
-        .then((user) => {
-            setCurrentUser(user);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    }, []);
+        if (loggedIn) {
+            api.getUserInfo()
+            .then((user) => {
+                setCurrentUser(user);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+    }, [loggedIn]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -63,8 +65,6 @@ function App() {
                     setEmail(res.data.email);
                     setLoggedIn(true);
                     history.push('/');
-                    // setButtonText('Выйти');
-                    // setButton({button: handleSignOut});
                 }
             })
             .catch((err) => {
@@ -169,11 +169,9 @@ function App() {
         .then((res) => {
             if (res) {
                 history.push('/sign-in');
-                // setButtonText('Регистрация');
                 setInfoTooltipPopupOpen(true);
                 setSrcInfoTooltip(true);
                 setTextInfoTooltip(true);
-                // setButton({button: handleSignIn});
             }
         })
         .catch((err) => {
@@ -192,7 +190,6 @@ function App() {
                 setLoggedIn(true);
                 setEmail(email.toLowerCase());
                 history.push('/');
-                // setButton({button: handleSignOut});
             }
         })
         .catch((err) => {
@@ -240,6 +237,7 @@ function App() {
                         </Route>
                         <Route exact path='/'>
                             <Header
+                                email={email}
                                 buttonText='Выйти'
                                 onClick={handleSignOut}
                             />
