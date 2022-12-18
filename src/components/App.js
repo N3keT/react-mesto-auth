@@ -28,9 +28,7 @@ function App() {
     const [cardDelete, setCardDelete] = useState({});
     const [loggedIn, setLoggedIn] =useState(false);
     const [email, setEmail] = useState('');
-    const [isInfoTooltipPopupOpen, setInfoTooltipPopupOpen] = useState(false);
-    const [srcInfoTooltip, setSrcInfoTooltip] = useState(false);
-    const [textInfoTooltip, setTextInfoTooltip] = useState(false);
+    const [infoToolTipState, setInfoToolTipState] = useState({open:false, srcImage: false, text: ''});
 
     useEffect(() => {
         if (loggedIn) {
@@ -131,7 +129,7 @@ function App() {
         setEditAvatarPopupOpen(false);
         setDeletePlacePopupOpen(false);
         setSelectedCard({isOpen: false});
-        setInfoTooltipPopupOpen(false);
+        setInfoToolTipState({open: false});
     }
 
     function handleCardClick(card) {
@@ -169,16 +167,12 @@ function App() {
         .then((res) => {
             if (res) {
                 history.push('/sign-in');
-                setInfoTooltipPopupOpen(true);
-                setSrcInfoTooltip(true);
-                setTextInfoTooltip(true);
+                setInfoToolTipState({open: true, srcImage: true, text: 'Вы успешно зарегистрировались!'});
             }
         })
         .catch((err) => {
             console.log(err);
-            setInfoTooltipPopupOpen(true);
-            setSrcInfoTooltip(false);
-            setTextInfoTooltip(false);
+            setInfoToolTipState({open: true, srcImage: false, text: 'Что-то пошло не так! Попробуйте ещё раз.'});
         });
     }
 
@@ -194,6 +188,7 @@ function App() {
         })
         .catch((err) => {
             console.log(err);
+            setInfoToolTipState({open: true, srcImage: false, text: 'Что-то пошло не так! Попробуйте ещё раз.'});
         });
     }
 
@@ -285,10 +280,10 @@ function App() {
                         card={cardDelete}
                     />
                     <InfoTooltip
-                        isOpen={isInfoTooltipPopupOpen}
+                        isOpen={infoToolTipState.open}
                         onClose={closeAllPopups}
-                        src={srcInfoTooltip}
-                        text={textInfoTooltip}
+                        src={infoToolTipState.srcImage}
+                        text={infoToolTipState.text}
                     />
                 </div>
             </div>
